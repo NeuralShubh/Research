@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SHUBIQ Flow — Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #00D9A0;
+    --purple: #7C3AED;
+    --bg: #0D1117;
+    --card-bg: rgba(30, 37, 51, 0.6);
+    --border: rgba(255,255,255,0.08);
+    --text-muted: #94a3b8;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ─── STAGE ─── */
+  #stage {
+    width: 1280px;
+    height: 720px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 80px rgba(0,217,160,0.15), 0 0 0 1px rgba(255,255,255,0.05);
+  }
+
+  /* ─── SLIDES ─── */
+  .slide {
+    position: absolute;
+    inset: 0;
+    width: 1280px;
+    height: 720px;
+    background: var(--bg);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease, transform 0.45s ease;
+    transform: translateX(60px);
+    overflow: hidden;
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+  .slide.exit {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  /* ─── SHARED BACKGROUNDS ─── */
+  .grid-bg {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0L1 40' stroke='rgba(255,255,255,0.03)' stroke-width='1'/%3E%3Cpath d='M0 1L40 1' stroke='rgba(255,255,255,0.03)' stroke-width='1'/%3E%3C/svg%3E");
+    z-index: 0; pointer-events: none;
+  }
+  .orb {
+    position: absolute; border-radius: 50%; filter: blur(150px); z-index: 0; pointer-events: none;
+  }
+  .orb-tl { width:400px;height:400px;background:var(--teal);opacity:.18;top:-100px;left:-100px; }
+  .orb-br { width:500px;height:500px;background:var(--purple);opacity:.15;bottom:-150px;right:-150px; }
+  .orb-tr { width:400px;height:400px;background:var(--teal);opacity:.15;top:-100px;right:-100px; }
+  .orb-bl { width:500px;height:500px;background:var(--purple);opacity:.15;bottom:-150px;left:-150px; }
+  .orb-center { width:200px;height:200px;background:var(--teal);opacity:.12;top:50%;left:50%;transform:translate(-50%,-50%); }
+  .orb-tc { width:500px;height:500px;background:var(--teal);opacity:.1;top:-250px;left:20%; }
+  .orb-bc { width:500px;height:500px;background:var(--purple);opacity:.1;bottom:-250px;right:20%; }
+
+  /* ─── SHARED TYPOGRAPHY ─── */
+  .section-label {
+    color:var(--teal);font-size:1.1rem;font-weight:700;letter-spacing:3px;
+    margin-bottom:.5rem;text-transform:uppercase;display:flex;align-items:center;gap:12px;
+  }
+  .section-label::before {
+    content:'';display:block;width:40px;height:3px;
+    background:var(--teal);border-radius:2px;flex-shrink:0;
+  }
+  .section-label-center {
+    color:var(--teal);font-size:1.1rem;font-weight:700;letter-spacing:3px;
+    margin-bottom:.5rem;text-transform:uppercase;display:inline-block;position:relative;
+  }
+  .section-label-center::after {
+    content:'';display:block;width:40px;height:3px;
+    background:var(--teal);margin:5px auto 0;border-radius:2px;
+  }
+  .main-title { font-size:3.2rem;font-weight:700;line-height:1.1;color:#fff; }
+  .deco-line { height:4px;width:100px;background:var(--teal);margin:0 auto 1rem;border-radius:2px;box-shadow:0 0 10px rgba(0,217,160,.5); }
+
+  /* ─── GLASS CARD ─── */
+  .glass { background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.3); }
+
+  /* ─── PHONE MOCKUP ─── */
+  .phone-wrap { position:relative; }
+  .phone-deco {
+    position:absolute;border-radius:40px;z-index:1;
+    border:2px solid rgba(124,58,237,.3);
+  }
+  .phone {
+    position:relative;z-index:10;
+    background:#1e1e1e;border-radius:40px;
+    border:8px solid #2d3748;overflow:hidden;
+    box-shadow:0 0 0 2px #1a202c,0 20px 50px rgba(0,0,0,.5),0 0 60px rgba(0,217,160,.2);
+  }
+  .phone-notch {
+    position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:120px;height:25px;background:#2d3748;
+    border-bottom-left-radius:12px;border-bottom-right-radius:12px;z-index:20;
+  }
+  .phone img { width:100%;height:100%;object-fit:cover;display:block; }
+
+  /* ─── FEATURE LIST ─── */
+  .feat-list { list-style:none;display:flex;flex-direction:column;gap:1.1rem; }
+  .feat-item { display:flex;align-items:flex-start;gap:14px;font-size:1.05rem;color:#e2e8f0;line-height:1.5; }
+  .feat-icon { font-size:1.3rem;min-width:30px; }
+
+  /* ─── NAV BAR ─── */
+  #nav {
+    width:1280px;
+    background:rgba(13,17,23,.95);
+    border-top:1px solid rgba(255,255,255,.07);
+    display:flex;align-items:center;gap:0;
+    padding:0;
+    flex-shrink:0;
+  }
+  #nav-slides {
+    display:flex;flex:1;align-items:center;
+    overflow-x:auto;scrollbar-width:none;
+    padding:8px 12px;gap:4px;
+  }
+  #nav-slides::-webkit-scrollbar { display:none; }
+  .nav-dot {
+    min-width:28px;height:28px;border-radius:6px;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+    color:var(--text-muted);font-size:.7rem;font-weight:600;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:all .2s;font-family:'Poppins',sans-serif;
+  }
+  .nav-dot:hover { background:rgba(0,217,160,.15);color:var(--teal);border-color:rgba(0,217,160,.3); }
+  .nav-dot.active { background:var(--teal);color:#0D1117;border-color:var(--teal); }
+  .nav-btn {
+    width:44px;height:44px;background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);color:#fff;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:all .2s;font-size:1rem;flex-shrink:0;
+  }
+  .nav-btn:hover { background:rgba(0,217,160,.2);color:var(--teal); }
+  #slide-counter {
+    padding:0 14px;color:var(--text-muted);font-size:.8rem;
+    font-weight:600;white-space:nowrap;
+  }
+  #progress-bar {
+    position:absolute;bottom:0;left:0;height:2px;
+    background:var(--teal);transition:width .3s ease;
+    box-shadow:0 0 8px rgba(0,217,160,.6);
+  }
+
+  /* ─── SLIDE 1: TITLE ─── */
+  #s1 { display:flex;justify-content:center;align-items:center; }
+  #s1 .content-card {
+    background:rgba(13,17,23,.6);backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.1);padding:4rem;border-radius:24px;
+    text-align:center;z-index:10;max-width:900px;
+    box-shadow:0 20px 50px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:1.5rem;
+  }
+  #s1 .title-text { font-size:5rem;font-weight:700;line-height:1.1;color:#fff;text-shadow:0 0 40px rgba(0,217,160,.4); }
+  #s1 .hl { color:var(--teal); }
+  #s1 .subtitle { font-size:2rem;color:#e2e8f0;font-weight:300;letter-spacing:1px; }
+  #s1 .sub-sub { font-size:1.2rem;color:var(--text-muted); }
+  #s1 .author-section { border-top:1px solid rgba(255,255,255,.1);padding-top:1.5rem; }
+  #s1 .author-name { font-size:1.1rem;color:#fff;font-weight:600;margin-bottom:.3rem; }
+  #s1 .institution { font-size:.9rem;color:var(--text-muted); }
+
+  /* ─── SLIDE 2: PROBLEM ─── */
+  #s2 { padding:40px; }
+  #s2 .content-wrapper { display:flex;height:100%;gap:40px;z-index:10;position:relative; }
+  #s2 .left { flex:.4;display:flex;flex-direction:column;justify-content:center; }
+  #s2 .right { flex:.6;display:flex;flex-direction:column;justify-content:center; }
+  #s2 .main-title { font-size:3rem;margin-bottom:2rem; }
+  #s2 .app-grid { display:flex;gap:16px;flex-wrap:wrap;margin-top:1.5rem; }
+  .app-icon-box {
+    width:65px;height:65px;background:rgba(255,255,255,.05);border-radius:14px;
+    display:flex;justify-content:center;align-items:center;position:relative;
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .app-icon-box i { font-size:1.6rem;color:var(--text-muted); }
+  .x-overlay {
+    position:absolute;top:-5px;right:-5px;width:22px;height:22px;
+    background:#ef4444;color:#fff;border-radius:50%;
+    display:flex;justify-content:center;align-items:center;font-size:.7rem;
+  }
+  #s2 .glass { padding:2.2rem; }
+  #s2 .problem-item { display:flex;align-items:flex-start;gap:14px;font-size:1.05rem;color:#e2e8f0;line-height:1.5;margin-bottom:1.1rem; }
+  #s2 .problem-item:last-child { margin-bottom:0; }
+
+  /* ─── SLIDE 3 / 4 / 6: LEFT-RIGHT FEATURE ─── */
+  .lr-slide { padding:40px; }
+  .lr-slide .content-wrapper { display:flex;height:100%;gap:60px;align-items:center;z-index:10;position:relative; }
+  .lr-slide .left { flex:.55;display:flex;flex-direction:column;justify-content:center; }
+  .lr-slide .right { flex:.45;display:flex;justify-content:center;align-items:center;height:100%; }
+  .lr-slide .main-title { margin-bottom:.4rem; }
+  .lr-slide .tagline { font-size:1.6rem;color:var(--teal);font-style:italic;font-weight:300;margin-bottom:2rem;opacity:.9; }
+  .lr-slide .subtitle { font-size:1.5rem;color:var(--text-muted);font-weight:300;font-style:italic;margin-bottom:2rem; }
+  .lr-slide .glass { padding:1.8rem;margin-top:0; }
+
+  /* ─── SLIDE 5: HABITS DUAL PHONE ─── */
+  #s5 { padding:40px; }
+  #s5 .content-wrapper { display:flex;height:100%;gap:40px;align-items:center;z-index:10;position:relative; }
+  #s5 .left { flex:.45;display:flex;flex-direction:column;justify-content:center; }
+  #s5 .right { flex:.55;display:flex;justify-content:center;align-items:center;height:100%;position:relative; }
+  #s5 .phone { position:absolute;width:240px;height:480px; }
+  #s5 .phone-1 { transform:translateX(-120px) translateY(15px) rotate(-5deg);z-index:10;box-shadow:0 0 60px rgba(124,58,237,.2); }
+  #s5 .phone-2 { transform:translateX(90px) translateY(-15px) rotate(5deg);z-index:20;box-shadow:0 0 60px rgba(0,217,160,.2); }
+  #s5 .deco-circle {
+    position:absolute;width:380px;height:380px;
+    border:2px dashed rgba(255,255,255,.08);border-radius:50%;
+    top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;
+  }
+
+  /* ─── SLIDE 7: ANALYTICS ─── */
+  #s7 { padding:35px 40px;display:flex;flex-direction:column; }
+  #s7 .header { z-index:10;margin-bottom:20px; }
+  #s7 .kpi-row { display:flex;gap:18px;margin-bottom:20px;z-index:10; }
+  .kpi-card { flex:1;background:rgba(30,37,51,.6);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px;display:flex;align-items:center;gap:14px; }
+  .kpi-icon { width:46px;height:46px;border-radius:10px;display:flex;justify-content:center;align-items:center;font-size:1.3rem; }
+  .icon-teal { background:rgba(0,217,160,.2);color:var(--teal);border:1px solid rgba(0,217,160,.3); }
+  .icon-purple { background:rgba(124,58,237,.2);color:var(--purple);border:1px solid rgba(124,58,237,.3); }
+  .kpi-value { font-size:1.6rem;font-weight:700;line-height:1;margin-bottom:3px; }
+  .kpi-label { font-size:.85rem;color:var(--text-muted);font-weight:500; }
+  #s7 .charts-row { display:flex;gap:22px;flex:1;z-index:10;min-height:0; }
+  .chart-card { background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:18px;padding:18px;display:flex;flex-direction:column; }
+  .chart-title { font-size:1rem;font-weight:600;margin-bottom:12px;color:#e2e8f0; }
+  .chart-wrap { flex:1;position:relative;min-height:0; }
+  #s7 .insight-row { display:flex;gap:18px;margin-top:16px;z-index:10; }
+  .insight-card { flex:1;background:rgba(30,37,51,.6);border:1px solid rgba(0,217,160,.2);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:.95rem;color:#e2e8f0;font-weight:500; }
+  .insight-hl { color:var(--teal);font-weight:700; }
+
+  /* ─── SLIDE 8: AI ENGINE ─── */
+  #s8 { padding:35px 60px;display:flex;flex-direction:column; }
+  #s8 .header { z-index:10;margin-bottom:1.5rem;text-align:center; }
+  #s8 .diagram { flex:1;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:10;padding:0 30px;margin-bottom:24px; }
+  .node-col { display:flex;flex-direction:column;justify-content:space-between;height:300px;z-index:2; }
+  .node-card { background:rgba(30,37,51,.7);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 18px;width:230px;display:flex;align-items:center;gap:14px;box-shadow:0 4px 15px rgba(0,0,0,.3); }
+  .nb-teal { border-left:4px solid var(--teal); }
+  .nb-purple { border-left:4px solid var(--purple); }
+  .node-icon { width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0; }
+  .ni-teal { background:rgba(0,217,160,.2);color:var(--teal); }
+  .ni-purple { background:rgba(124,58,237,.2);color:var(--purple); }
+  .node-text { font-size:.9rem;font-weight:500;line-height:1.3;color:#e2e8f0; }
+  .engine-col { display:flex;justify-content:center;align-items:center;z-index:3; }
+  .engine-card {
+    width:290px;height:210px;
+    background:rgba(13,17,23,.9);backdrop-filter:blur(16px);
+    border:1px solid rgba(0,217,160,.3);border-radius:20px;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    text-align:center;padding:20px;
+    box-shadow:0 0 40px rgba(0,217,160,.15);
+    animation:pulse-glow 3s infinite;
+  }
+  .engine-icon {
+    width:64px;height:64px;background:rgba(0,217,160,.1);
+    border:2px solid var(--teal);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.8rem;color:var(--teal);margin-bottom:12px;
+    box-shadow:0 0 20px rgba(0,217,160,.3);
+  }
+  .engine-title { font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:8px; }
+  .engine-desc { font-size:.8rem;color:var(--text-muted);line-height:1.4; }
+  .svg-conn { position:absolute;inset:0;pointer-events:none;z-index:1; }
+  #s8 .feats-row { display:flex;justify-content:space-between;gap:12px;z-index:10; }
+  .feat-box { flex:1;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:10px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px; }
+  .feat-box-icon { font-size:1.4rem; }
+  .feat-box-text { font-size:.78rem;color:#cbd5e1;line-height:1.3;font-weight:500; }
+  @keyframes pulse-glow {
+    0%,100% { box-shadow:0 0 30px rgba(0,217,160,.1); }
+    50% { box-shadow:0 0 50px rgba(0,217,160,.3); }
+  }
+
+  /* ─── SLIDE 9: TECH STACK ─── */
+  #s9 { padding:35px 60px;display:flex;flex-direction:column; }
+  #s9 .content { display:flex;flex:1;gap:40px;z-index:10;align-items:flex-start; }
+  #s9 .left { flex:.62;display:flex;flex-direction:column;gap:10px; }
+  #s9 .right { flex:.38;display:flex;flex-direction:column;justify-content:center;height:100%; }
+  .tech-card { display:flex;align-items:center;background:rgba(30,37,51,.6);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:10px;padding:10px 18px; }
+  .tc-teal { border-left:4px solid var(--teal); }
+  .tc-purple { border-left:4px solid var(--purple); }
+  .tech-icon-box { width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-right:14px;font-size:1rem; }
+  .ti-teal { background:rgba(0,217,160,.15);color:var(--teal); }
+  .ti-purple { background:rgba(124,58,237,.15);color:var(--purple); }
+  .tech-layer { font-size:.9rem;font-weight:600;width:150px;color:var(--text-muted); }
+  .tc-teal .tech-layer { color:var(--teal); }
+  .tc-purple .tech-layer { color:var(--purple); }
+  .tech-arrow { color:#475569;margin-right:14px;font-size:.85rem; }
+  .tech-name { font-size:1rem;font-weight:600;color:#fff; }
+  .diag-card { background:rgba(13,17,23,.6);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:24px;display:flex;flex-direction:column;align-items:center; }
+  .diag-title { font-size:1rem;font-weight:600;color:#e2e8f0;margin-bottom:24px;text-align:center;width:100%;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:14px; }
+  .flow-node { width:100%;background:rgba(30,37,51,.8);border:1px solid rgba(0,217,160,.3);border-radius:9px;padding:11px;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px;position:relative; }
+  .flow-node.db { border-color:rgba(124,58,237,.3); }
+  .flow-node:last-child { margin-bottom:0; }
+  .flow-text { font-size:.9rem;font-weight:600;color:#e2e8f0; }
+  .conn-line { position:absolute;width:2px;height:28px;background:#475569;left:50%;transform:translateX(-50%);bottom:-28px;z-index:1; }
+  .conn-arrow { position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);color:#475569;font-size:11px; }
+  .tt { color:var(--teal); } .tp { color:var(--purple); }
+
+  /* ─── SLIDE 10: GAMIFICATION ─── */
+  #s10 { padding:40px 60px; }
+  #s10 .cw { display:flex;height:100%;gap:60px;align-items:center;z-index:10;position:relative; }
+  #s10 .left { flex:.6;display:flex;flex-direction:column;justify-content:center; }
+  #s10 .right { flex:.4;display:flex;justify-content:center;align-items:center;height:100%;position:relative; }
+  .xp-box { background:rgba(30,37,51,.6);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:18px;margin-bottom:24px;backdrop-filter:blur(10px); }
+  .xp-header { display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px; }
+  .xp-level { font-size:1.1rem;font-weight:700;color:#fff; }
+  .xp-level span { color:var(--teal); }
+  .xp-vals { font-size:.85rem;color:var(--text-muted);font-weight:600; }
+  .progress-track { width:100%;height:11px;background:rgba(255,255,255,.1);border-radius:6px;overflow:hidden; }
+  .progress-fill { width:45%;height:100%;background:var(--teal);border-radius:6px;box-shadow:0 0 10px rgba(0,217,160,.5); }
+  #s10 .flist { display:flex;flex-direction:column;gap:12px; }
+  #s10 .fi { display:flex;align-items:center;gap:14px;background:rgba(30,37,51,.4);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:11px 14px; }
+  #s10 .fi-icon { width:34px;height:34px;background:rgba(124,58,237,.15);border-radius:7px;display:flex;justify-content:center;align-items:center;font-size:1rem;flex-shrink:0;color:#e2e8f0; }
+  #s10 .fi-icon.t { background:rgba(0,217,160,.15); }
+  #s10 .fi-text { font-size:.95rem;color:#e2e8f0;line-height:1.4; }
+  #s10 .phone { width:280px;height:560px;position:relative;z-index:10; }
+  #s10 .phone-deco { width:300px;height:520px;transform:rotate(-6deg);z-index:1;border-color:rgba(124,58,237,.3); }
+
+  /* ─── SLIDE 11: FREEMIUM ─── */
+  #s11 { padding:40px 60px;display:flex;flex-direction:column; }
+  #s11 .header { z-index:10;margin-bottom:24px;text-align:center; }
+  #s11 .pricing-row { display:flex;justify-content:center;align-items:stretch;gap:40px;flex:1;z-index:10; }
+  .pricing-card { flex:1;max-width:480px;background:rgba(30,37,51,.6);backdrop-filter:blur(16px);border-radius:22px;padding:28px;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,.3); }
+  .pc-free { border:2px solid rgba(0,217,160,.3); }
+  .pc-pro { border:2px solid rgba(124,58,237,.3);background:rgba(30,37,51,.75); }
+  .card-header { margin-bottom:22px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:18px;position:relative;overflow:hidden; }
+  .tier-name { font-size:1.9rem;font-weight:700;margin-bottom:8px; }
+  .tn-free { color:var(--teal); } .tn-pro { color:var(--purple); }
+  .tier-badge { display:inline-block;font-size:.8rem;font-weight:600;padding:5px 11px;border-radius:18px; }
+  .tb-free { background:rgba(0,217,160,.15);color:var(--teal);border:1px solid rgba(0,217,160,.3); }
+  .tb-pro { background:rgba(124,58,237,.15);color:var(--purple);border:1px solid rgba(124,58,237,.3); }
+  .pf-list { flex:1;display:flex;flex-direction:column;gap:13px; }
+  .pf-item { display:flex;align-items:center;gap:11px;font-size:1rem;color:#e2e8f0;line-height:1.4; }
+  .pf-icon { font-size:1.05rem;min-width:22px;text-align:center; }
+  .glow-orb { position:absolute;top:-50px;right:-50px;width:140px;height:140px;border-radius:50%;filter:blur(50px);z-index:0; }
+  .go-free { background:rgba(0,217,160,.15); } .go-pro { background:rgba(124,58,237,.15); }
+  #s11 .tagline { text-align:center;color:#64748b;font-size:1rem;margin-top:18px;z-index:10;font-style:italic; }
+
+  /* ─── SLIDE 12: RESEARCH ─── */
+  #s12 { padding:40px 60px;display:flex;flex-direction:column; }
+  #s12 .header { z-index:10;margin-bottom:24px;text-align:center; }
+  #s12 .content { display:flex;flex-direction:column;gap:22px;flex:1;z-index:10;justify-content:center; }
+  #s12 .cards-row { display:flex;gap:18px;justify-content:center; }
+  .res-card { flex:1;background:rgba(30,37,51,.6);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:10px; }
+  .rc-teal { border-left:4px solid var(--teal); } .rc-purple { border-left:4px solid var(--purple); }
+  .rc-icon { width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.85rem; }
+  .ri-teal { background:rgba(0,217,160,.15);color:var(--teal); } .ri-purple { background:rgba(124,58,237,.15);color:var(--purple); }
+  .rc-header { font-size:1rem;font-weight:700; }
+  .rc-text { font-size:.9rem;color:#e2e8f0;line-height:1.5; }
+  .hl-card { background:rgba(30,37,51,.8);backdrop-filter:blur(12px);border-radius:14px;padding:18px 26px;display:flex;align-items:center;gap:18px; }
+  .gap-card { border:1px solid rgba(239,68,68,.3);border-left:6px solid #ef4444; }
+  .sol-card { border:1px solid rgba(0,217,160,.3);border-left:6px solid var(--teal);background:rgba(0,217,160,.04); }
+  .hl-icon { width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0; }
+  .hi-gap { background:rgba(239,68,68,.15);color:#ef4444; }
+  .hi-sol { background:rgba(0,217,160,.15);color:var(--teal); }
+  .hl-title { font-size:1rem;font-weight:700;color:#fff;margin-bottom:4px; }
+  .hl-desc { font-size:.95rem;color:#cbd5e1;line-height:1.4; }
+
+  /* ─── SLIDE 13: CHALLENGES ─── */
+  #s13 { padding:40px 60px;display:flex;flex-direction:column; }
+  #s13 .header { z-index:10;margin-bottom:22px;text-align:center; }
+  #s13 .grid { display:flex;flex-direction:column;gap:22px;flex:1;z-index:10;justify-content:center; }
+  #s13 .row { display:flex;justify-content:center;gap:22px; }
+  .chal-card { background:rgba(30,37,51,.7);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:22px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;flex:1;max-width:330px;position:relative;overflow:hidden; }
+  .cc-orange { border-top:4px solid #F59E0B; } .cc-red { border-top:4px solid #EF4444; }
+  .cc-yellow { border-top:4px solid #FBBF24; } .cc-purple { border-top:4px solid var(--purple); }
+  .cc-teal { border-top:4px solid var(--teal); }
+  .cc-deco { position:absolute;top:8px;right:10px;font-size:3rem;opacity:.05;font-weight:800;line-height:1; }
+  .cc-icon { width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:12px; }
+  .ci-orange { background:rgba(245,158,11,.15);color:#F59E0B; }
+  .ci-red { background:rgba(239,68,68,.15);color:#EF4444; }
+  .ci-yellow { background:rgba(251,191,36,.15);color:#FBBF24; }
+  .ci-purple { background:rgba(124,58,237,.15);color:var(--purple); }
+  .ci-teal { background:rgba(0,217,160,.15);color:var(--teal); }
+  .cc-title { font-size:1rem;font-weight:700;margin-bottom:8px; }
+  .co { color:#F59E0B; } .cr { color:#EF4444; } .cy { color:#FBBF24; }
+  .cp { color:var(--purple); } .ct { color:var(--teal); }
+  .cc-desc { font-size:.85rem;color:#cbd5e1;line-height:1.5; }
+
+  /* ─── SLIDE 14: ROADMAP ─── */
+  #s14 { padding:40px 60px;display:flex;flex-direction:column; }
+  #s14 .header { z-index:10;margin-bottom:40px;text-align:center; }
+  #s14 .timeline { position:relative;flex:1;display:flex;align-items:center;justify-content:center;z-index:10; }
+  .tl-line { position:absolute;top:50%;left:40px;right:40px;height:4px;background:rgba(255,255,255,.1);transform:translateY(-50%);z-index:1;border-radius:2px; }
+  .tl-progress { position:absolute;inset:0;background:var(--teal);box-shadow:0 0 15px rgba(0,217,160,.5);border-radius:2px; }
+  .nodes-wrap { display:flex;justify-content:space-between;width:100%;padding:0 20px;position:relative;z-index:2; }
+  .rn { display:flex;flex-direction:column;align-items:center;width:150px;position:relative; }
+  .rn-top { text-align:center;height:75px;display:flex;flex-direction:column;justify-content:flex-end;margin-bottom:8px; }
+  .rn-bottom { text-align:center;height:75px;display:flex;flex-direction:column;justify-content:flex-start;margin-top:8px; }
+  .rn-circle { width:56px;height:56px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:1.3rem;border:3px solid;position:relative;z-index:5; }
+  .rn.st .rn-circle { border-color:var(--teal);color:var(--teal);box-shadow:0 0 20px rgba(0,217,160,.3); }
+  .rn.sp .rn-circle { border-color:var(--purple);color:var(--purple);box-shadow:0 0 20px rgba(124,58,237,.3); }
+  .rn-phase { font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;display:block; }
+  .rn.st .rn-phase { color:var(--teal); } .rn.sp .rn-phase { color:var(--purple); }
+  .rn-title { font-size:.9rem;font-weight:700;color:#fff;line-height:1.2; }
+  .rn-desc { font-size:.78rem;color:var(--text-muted);line-height:1.4;background:rgba(30,37,51,.6);padding:7px 9px;border-radius:7px;border:1px solid rgba(255,255,255,.05);backdrop-filter:blur(4px); }
+
+  /* ─── SLIDE 15: CONCLUSION ─── */
+  #s15 { padding:40px 60px;display:flex;flex-direction:column; }
+  #s15 .header { z-index:10;margin-bottom:22px; }
+  #s15 .content { flex:1;display:flex;flex-direction:column;justify-content:center;z-index:10; }
+  #s15 .grid { display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:22px; }
+  .conc-card { background:rgba(30,37,51,.6);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:18px;display:flex;align-items:flex-start;gap:14px; }
+  .conc-icon { width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0; }
+  .ci-t { background:rgba(0,217,160,.15);color:var(--teal);border:1px solid rgba(0,217,160,.3); }
+  .ci-p { background:rgba(124,58,237,.15);color:var(--purple);border:1px solid rgba(124,58,237,.3); }
+  .conc-title { font-size:1rem;font-weight:700;color:#fff;margin-bottom:4px; }
+  .conc-desc { font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.4; }
+  .quote-card { background:rgba(13,17,23,.7);backdrop-filter:blur(10px);border:1px solid rgba(0,217,160,.3);border-radius:18px;padding:24px;text-align:center; }
+  .quote-text { font-size:1.5rem;font-weight:700;color:#fff;font-style:italic;letter-spacing:.3px; }
+  .quote-teal { color:var(--teal); }
+  #s15 footer { margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);z-index:10;display:flex;justify-content:space-between;align-items:center;font-size:.75rem;color:rgba(255,255,255,.4); }
+
+  /* ─── NAV RESPONSIVENESS ─── */
+  @media (max-width:1300px) {
+    body { transform:scale(0.8);transform-origin:top center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     STAGE
+══════════════════════════════════ -->
+<div id="stage">
+
+  <!-- ── SLIDE 1: TITLE ── -->
+  <div class="slide active" id="s1">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tl"></div>
+    <div class="orb orb-br"></div>
+    <div class="orb orb-center"></div>
+    <div class="content-card">
+      <div>
+        <div class="deco-line"></div>
+        <p class="title-text">SHUBIQ <span class="hl">Flow</span></p>
+      </div>
+      <div>
+        <p class="subtitle">AI-Powered Productivity Platform</p>
+        <p class="sub-sub">Transforming Personal &amp; Business Efficiency</p>
+      </div>
+      <div class="author-section">
+        <p class="author-name">Shubham Malgonda Patil</p>
+        <p class="institution">MCA — Vasantraodada Patil Institute of Management Studies &amp; Research</p>
+        <p class="institution">Sangli, India</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 2: PROBLEM ── -->
+  <div class="slide" id="s2">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tr"></div>
+    <div class="orb orb-bl"></div>
+    <div class="content-wrapper">
+      <div class="left">
+        <p class="section-label">THE PROBLEM</p>
+        <p class="main-title" style="font-size:2.8rem;margin-bottom:1.5rem;">The Productivity Fragmentation Problem</p>
+        <div class="app-grid">
+          <div class="app-icon-box"><i class="fas fa-check-square"></i><div class="x-overlay"><i class="fas fa-times"></i></div></div>
+          <div class="app-icon-box"><i class="fas fa-calendar-alt"></i><div class="x-overlay"><i class="fas fa-times"></i></div></div>
+          <div class="app-icon-box"><i class="fas fa-sticky-note"></i><div class="x-overlay"><i class="fas fa-times"></i></div></div>
+          <div class="app-icon-box"><i class="fas fa-stopwatch"></i><div class="x-overlay"><i class="fas fa-times"></i></div></div>
+          <div class="app-icon-box"><i class="fas fa-chart-line"></i><div class="x-overlay"><i class="fas fa-times"></i></div></div>
+        </div>
+        <p style="margin-top:14px;color:#ef4444;font-size:.9rem;font-weight:500;"><i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i>Disconnected Workflows</p>
+      </div>
+      <div class="right">
+        <div class="glass" style="padding:2rem;">
+          <div class="problem-item"><span style="font-size:1.3rem;min-width:28px;">📱</span><p>Users juggle multiple separate apps for different needs (tasks, habits, focus).</p></div>
+          <div class="problem-item"><span style="font-size:1.3rem;min-width:28px;">⏰</span><p>Constant app-switching causes distractions and breaks flow state.</p></div>
+          <div class="problem-item"><span style="font-size:1.3rem;min-width:28px;">📊</span><p>No unified view of overall productivity or progress tracking.</p></div>
+          <div class="problem-item"><span style="font-size:1.3rem;min-width:28px;">🔄</span><p>Manual tracking leads to administrative overhead and user fatigue.</p></div>
+          <div class="problem-item"><span style="font-size:1.3rem;min-width:28px;">❌</span><p>Traditional tools act as static lists and lack intelligent, data-driven insights.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 3: SOLUTION ── -->
+  <div class="slide lr-slide" id="s3">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tl"></div><div class="orb orb-br"></div>
+    <div class="content-wrapper">
+      <div class="left">
+        <p class="section-label">THE SOLUTION</p>
+        <p class="main-title">Introducing SHUBIQ Flow</p>
+        <p class="tagline">One Platform. Total Productivity.</p>
+        <div class="glass" style="padding:1.8rem;">
+          <ul class="feat-list">
+            <li class="feat-item"><span class="feat-icon">✅</span><p>Unified ecosystem integrating 3 core productivity pillars</p></li>
+            <li class="feat-item"><span class="feat-icon">🤖</span><p>AI-powered behavioral analysis &amp; recommendations</p></li>
+            <li class="feat-item"><span class="feat-icon">📱</span><p>Mobile-first, offline-capable design architecture</p></li>
+            <li class="feat-item"><span class="feat-icon">🎮</span><p>Gamified engagement system for sustained motivation</p></li>
+            <li class="feat-item"><span class="feat-icon">☁️</span><p>Optional cloud sync with flexible Freemium model</p></li>
+          </ul>
+        </div>
+      </div>
+      <div class="right">
+        <div class="phone-wrap">
+          <div class="phone-deco" style="width:310px;height:500px;transform:rotate(-5deg) translate(20px,20px);"></div>
+          <div class="phone" style="width:280px;height:560px;">
+            <div class="phone-notch"></div>
+            <img alt="SHUBIQ Flow App" src="0.jpg"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 4: SMART TASKS ── -->
+  <div class="slide lr-slide" id="s4">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tl"></div><div class="orb orb-br"></div>
+    <div class="content-wrapper">
+      <div class="left">
+        <p class="section-label">CORE FEATURE 1</p>
+        <p class="main-title">Smart Task Management</p>
+        <div class="glass" style="padding:1.8rem;margin-top:1.5rem;">
+          <ul class="feat-list">
+            <li class="feat-item"><span class="feat-icon">📋</span><p>Organize tasks by priority (High / Med / Low)</p></li>
+            <li class="feat-item"><span class="feat-icon">🏷️</span><p>Category tags: Health, Learning, Finance, Work</p></li>
+            <li class="feat-item"><span class="feat-icon">⏰</span><p>Schedule with time-based reminders</p></li>
+            <li class="feat-item"><span class="feat-icon">📅</span><p>Today / Upcoming / Done / Skipped views</p></li>
+            <li class="feat-item"><span class="feat-icon">⚡</span><p>XP reward system (+10 to +35 XP per task)</p></li>
+            <li class="feat-item"><span class="feat-icon">👁️</span><p>Real-time progress tracker</p></li>
+          </ul>
+        </div>
+      </div>
+      <div class="right">
+        <div class="phone-wrap">
+          <div class="phone-deco" style="width:310px;height:500px;transform:rotate(-5deg) translate(20px,20px);"></div>
+          <div class="phone" style="width:280px;height:560px;">
+            <div class="phone-notch"></div>
+            <img alt="Smart Tasks" src="1.png"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 5: HABITS ── -->
+  <div class="slide" id="s5">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tl"></div><div class="orb orb-br"></div>
+    <div class="content-wrapper">
+      <div class="left">
+        <p class="section-label">CORE FEATURE 2</p>
+        <p class="main-title" style="font-size:2.8rem;margin-bottom:1.5rem;">Habit Tracking &amp; Streak System</p>
+        <div class="glass" style="padding:1.8rem;">
+          <ul class="feat-list">
+            <li class="feat-item"><span class="feat-icon">🔥</span><p>Daily streaks to build consistent habits</p></li>
+            <li class="feat-item"><span class="feat-icon">🎯</span><p>Track recurring behaviors (Work, Learning, Health)</p></li>
+            <li class="feat-item"><span class="feat-icon">🏆</span><p>Achievement badges: First Step, On Fire, Unstoppable, Century</p></li>
+            <li class="feat-item"><span class="feat-icon">📈</span><p>Gamification: XP system with Level progression</p></li>
+            <li class="feat-item"><span class="feat-icon">🗓️</span><p>Weekly calendar view (Mon–Sun)</p></li>
+            <li class="feat-item"><span class="feat-icon">🔒</span><p>Archived habits management</p></li>
+          </ul>
+        </div>
+      </div>
+      <div class="right">
+        <div class="deco-circle"></div>
+        <div class="phone phone-1" style="width:240px;height:480px;">
+          <div class="phone-notch"></div>
+          <img alt="Habit Tracking" src="4.png"/>
+        </div>
+        <div class="phone phone-2" style="width:240px;height:480px;">
+          <div class="phone-notch"></div>
+          <img alt="Achievement Badges" src="5.png"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 6: FOCUS ── -->
+  <div class="slide lr-slide" id="s6">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tl"></div><div class="orb orb-br"></div>
+    <div class="content-wrapper">
+      <div class="left">
+        <p class="section-label">CORE FEATURE 3</p>
+        <p class="main-title">Deep Focus Sessions</p>
+        <p class="subtitle">(Pomodoro-Style)</p>
+        <div class="glass" style="padding:1.8rem;">
+          <ul class="feat-list">
+            <li class="feat-item"><span class="feat-icon">⏱️</span><p>Custom countdown timer (e.g., 44:56 Custom)</p></li>
+            <li class="feat-item"><span class="feat-icon">🎯</span><p>Session-based concentration tracking</p></li>
+            <li class="feat-item"><span class="feat-icon">📊</span><p>Productivity scoring per session</p></li>
+            <li class="feat-item"><span class="feat-icon">⏭️</span><p>End / Pause / Skip controls</p></li>
+            <li class="feat-item"><span class="feat-icon">🔗</span><p>Linked directly to habit goals</p></li>
+            <li class="feat-item"><span class="feat-icon">🌙</span><p>Dark immersive full-screen UI</p></li>
+          </ul>
+        </div>
+      </div>
+      <div class="right">
+        <div class="phone-wrap">
+          <div class="phone-deco" style="width:330px;height:545px;border-color:rgba(0,217,160,.3);transform:rotate(5deg) translate(-10px,10px);"></div>
+          <div class="phone" style="width:300px;height:600px;box-shadow:0 0 80px rgba(0,217,160,.3);">
+            <div class="phone-notch"></div>
+            <img alt="Deep Focus" src="6.png"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 7: ANALYTICS ── -->
+  <div class="slide" id="s7">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tr"></div><div class="orb orb-bl"></div>
+    <div class="header">
+      <p class="section-label">ANALYTICS</p>
+      <h1 class="main-title" style="font-size:2.6rem;">Powerful Analytics &amp; Insights</h1>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-icon icon-teal"><i class="fas fa-check"></i></div><div><p class="kpi-value">2 Done</p><p class="kpi-label">Tasks Completed</p></div></div>
+      <div class="kpi-card"><div class="kpi-icon icon-purple"><i class="fas fa-chart-pie"></i></div><div><p class="kpi-value">33% Rate</p><p class="kpi-label">Completion Rate</p></div></div>
+      <div class="kpi-card"><div class="kpi-icon icon-teal"><i class="fas fa-list-ul"></i></div><div><p class="kpi-value">6 Total</p><p class="kpi-label">Active Tasks</p></div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card" style="flex:.6;"><p class="chart-title">Daily Completion (Last 7 Days)</p><div class="chart-wrap"><canvas id="barChart"></canvas></div></div>
+      <div class="chart-card" style="flex:.4;"><p class="chart-title">Category Breakdown</p><div class="chart-wrap"><canvas id="donutChart"></canvas></div></div>
+    </div>
+    <div class="insight-row">
+      <div class="insight-card"><i class="fas fa-trophy" style="color:#fbbf24;font-size:1.1rem;"></i><p>Best Day: <span class="insight-hl">2 tasks</span> on Fri, 13 Mar</p></div>
+      <div class="insight-card"><i class="far fa-calendar-check" style="color:var(--teal);font-size:1.1rem;"></i><p>Best Weekday: <span class="insight-hl">Friday</span> (Most Productive)</p></div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 8: AI ENGINE ── -->
+  <div class="slide" id="s8">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tc"></div><div class="orb orb-bc"></div>
+    <div class="header">
+      <p class="section-label-center">AI LAYER</p>
+      <h1 class="main-title" style="font-size:2.4rem;text-align:center;margin-top:.5rem;">The AI Intelligence Engine</h1>
+    </div>
+    <div class="diagram">
+      <svg class="svg-conn" width="100%" height="100%">
+        <defs><marker id="arr" markerHeight="7" markerWidth="10" orient="auto" refX="9" refY="3.5"><polygon fill="#64748b" opacity=".5" points="0 0,10 3.5,0 7"/></marker></defs>
+        <path d="M 265 42 C 360 42,360 152,410 152" fill="none" marker-end="url(#arr)" opacity=".3" stroke="#64748b" stroke-width="2"/>
+        <path d="M 265 152 L 410 152" fill="none" marker-end="url(#arr)" opacity=".3" stroke="#64748b" stroke-width="2"/>
+        <path d="M 265 262 C 360 262,360 152,410 152" fill="none" marker-end="url(#arr)" opacity=".3" stroke="#64748b" stroke-width="2"/>
+        <path d="M 730 152 C 780 152,780 42,850 42" fill="none" marker-end="url(#arr)" opacity=".3" stroke="#64748b" stroke-width="2"/>
+        <path d="M 730 152 L 850 152" fill="none" marker-end="url(#arr)" opacity=".3" stroke="#64748b" stroke-width="2"/>
+        <path d="M 730 152 C 780 152,780 262,850 262" fill="none" marker-end="url(#arr)" opacity=".3" stroke="#64748b" stroke-width="2"/>
+      </svg>
+      <div class="node-col">
+        <div class="node-card nb-teal"><div class="node-icon ni-teal"><i class="fas fa-tasks"></i></div><p class="node-text">Tasks Data<br/><span style="font-size:.72rem;color:var(--text-muted);">Completion &amp; History</span></p></div>
+        <div class="node-card nb-purple"><div class="node-icon ni-purple"><i class="fas fa-fire"></i></div><p class="node-text">Habits Data<br/><span style="font-size:.72rem;color:var(--text-muted);">Streaks &amp; Frequency</span></p></div>
+        <div class="node-card nb-teal"><div class="node-icon ni-teal"><i class="fas fa-hourglass-half"></i></div><p class="node-text">Focus Data<br/><span style="font-size:.72rem;color:var(--text-muted);">Duration &amp; Quality</span></p></div>
+      </div>
+      <div class="engine-col">
+        <div class="engine-card">
+          <div class="engine-icon"><i class="fas fa-brain"></i></div>
+          <p class="engine-title">AI Analysis Engine</p>
+          <p class="engine-desc">Pattern Detection + Predictive Modeling + Personalization</p>
+        </div>
+      </div>
+      <div class="node-col">
+        <div class="node-card nb-teal"><div class="node-icon ni-teal"><i class="fas fa-chart-line"></i></div><p class="node-text">Habit Success Prediction</p></div>
+        <div class="node-card nb-purple"><div class="node-icon ni-purple"><i class="fas fa-lightbulb"></i></div><p class="node-text">Personalized Recommendations</p></div>
+        <div class="node-card nb-teal"><div class="node-icon ni-teal"><i class="fas fa-crosshairs"></i></div><p class="node-text">Focus Performance Insights</p></div>
+      </div>
+    </div>
+    <div class="feats-row">
+      <div class="feat-box"><span class="feat-box-icon">🧠</span><p class="feat-box-text">Behavioral Pattern Analysis</p></div>
+      <div class="feat-box"><span class="feat-box-icon">🔮</span><p class="feat-box-text">Predictive Modeling</p></div>
+      <div class="feat-box"><span class="feat-box-icon">💡</span><p class="feat-box-text">Personalized Recommendations</p></div>
+      <div class="feat-box"><span class="feat-box-icon">📉</span><p class="feat-box-text">Focus Trend Analysis</p></div>
+      <div class="feat-box"><span class="feat-box-icon">🤖</span><p class="feat-box-text">ML Models (FastAPI/On-Device)</p></div>
+      <div class="feat-box"><span class="feat-box-icon">🚀</span><p class="feat-box-text">Tracker → Intelligent Assistant</p></div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 9: TECH STACK ── -->
+  <div class="slide" id="s9">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tc"></div><div class="orb orb-bc"></div>
+    <div style="z-index:10;margin-bottom:20px;position:relative;">
+      <p class="section-label">TECHNICAL ARCHITECTURE</p>
+      <h1 class="main-title" style="font-size:2.6rem;">Tech Stack &amp; Architecture</h1>
+    </div>
+    <div class="content" style="position:relative;">
+      <div class="left">
+        <div class="tech-card tc-teal"><div class="tech-icon-box ti-teal"><i class="fas fa-mobile-alt"></i></div><p class="tech-layer">Mobile Framework</p><div class="tech-arrow"><i class="fas fa-arrow-right"></i></div><p class="tech-name">Flutter (Dart)</p></div>
+        <div class="tech-card tc-purple"><div class="tech-icon-box ti-purple"><i class="fas fa-database"></i></div><p class="tech-layer">Local Storage</p><div class="tech-arrow"><i class="fas fa-arrow-right"></i></div><p class="tech-name">Hive (Offline-First)</p></div>
+        <div class="tech-card tc-teal"><div class="tech-icon-box ti-teal"><i class="fas fa-server"></i></div><p class="tech-layer">Backend API</p><div class="tech-arrow"><i class="fas fa-arrow-right"></i></div><p class="tech-name">FastAPI (Python)</p></div>
+        <div class="tech-card tc-purple"><div class="tech-icon-box ti-purple"><i class="fas fa-cogs"></i></div><p class="tech-layer">Database</p><div class="tech-arrow"><i class="fas fa-arrow-right"></i></div><p class="tech-name">PostgreSQL</p></div>
+        <div class="tech-card tc-teal"><div class="tech-icon-box ti-teal"><i class="fas fa-shield-alt"></i></div><p class="tech-layer">Authentication</p><div class="tech-arrow"><i class="fas fa-arrow-right"></i></div><p class="tech-name">Firebase Auth</p></div>
+        <div class="tech-card tc-purple"><div class="tech-icon-box ti-purple"><i class="fas fa-brain"></i></div><p class="tech-layer">AI Engine</p><div class="tech-arrow"><i class="fas fa-arrow-right"></i></div><p class="tech-name">ML Models (Proposed)</p></div>
+        <div class="tech-card tc-teal"><div class="tech-icon-box ti-teal"><i class="fab fa-android"></i></div><p class="tech-layer">Platform</p><div class="tech-arrow"><i class="fas fa-arrow-right"></i></div><p class="tech-name">Android (iOS &amp; Web planned)</p></div>
+      </div>
+      <div class="right">
+        <div class="diag-card">
+          <p class="diag-title">Data Flow Architecture</p>
+          <div class="flow-node"><i class="fas fa-mobile-alt tt"></i><p class="flow-text">Flutter App</p><div class="conn-line"></div><i class="fas fa-chevron-down conn-arrow"></i></div>
+          <div class="flow-node db"><i class="fas fa-database tp"></i><p class="flow-text">Hive (Local)</p><div class="conn-line"></div><i class="fas fa-chevron-down conn-arrow"></i></div>
+          <div class="flow-node"><i class="fas fa-server tt"></i><p class="flow-text">FastAPI</p><div class="conn-line"></div><i class="fas fa-chevron-down conn-arrow"></i></div>
+          <div class="flow-node db"><i class="fas fa-cogs tp"></i><p class="flow-text">PostgreSQL</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 10: GAMIFICATION ── -->
+  <div class="slide" id="s10">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tl"></div><div class="orb orb-br"></div>
+    <div class="cw">
+      <div class="left">
+        <p class="section-label">GAMIFICATION</p>
+        <h1 class="main-title" style="font-size:2.8rem;margin-bottom:1.5rem;">Gamification &amp; Motivation Engine</h1>
+        <div class="xp-box">
+          <div class="xp-header">
+            <p class="xp-level">LVL 1 <span style="margin:0 8px;color:#64748b;">|</span><span>Beginner</span></p>
+            <p class="xp-vals">150 / 328 XP</p>
+          </div>
+          <div class="progress-track"><div class="progress-fill"></div></div>
+        </div>
+        <div class="flist">
+          <div class="fi"><div class="fi-icon t"><i class="fas fa-gamepad"></i></div><p class="fi-text">XP Points for every completed task/habit</p></div>
+          <div class="fi"><div class="fi-icon"><i class="fas fa-medal"></i></div><p class="fi-text">Achievement Badges unlocked progressively</p></div>
+          <div class="fi"><div class="fi-icon t"><i class="fas fa-fire"></i></div><p class="fi-text">Streak multipliers encourage daily commitment</p></div>
+          <div class="fi"><div class="fi-icon"><i class="fas fa-chart-bar"></i></div><p class="fi-text">Visual progress bars with XP milestones</p></div>
+          <div class="fi"><div class="fi-icon t"><i class="fas fa-bullseye"></i></div><p class="fi-text">Rewards aligned with real productivity outcomes</p></div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="phone-deco" style="width:300px;height:520px;position:absolute;"></div>
+        <div class="phone" style="width:280px;height:560px;position:relative;z-index:10;">
+          <div class="phone-notch"></div>
+          <img alt="Gamification" src="5.png"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 11: FREEMIUM ── -->
+  <div class="slide" id="s11">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tl"></div><div class="orb orb-br"></div>
+    <div class="header">
+      <p class="section-label-center">BUSINESS MODEL</p>
+      <h1 class="main-title" style="font-size:2.8rem;text-align:center;margin-top:.4rem;">Freemium Business Model</h1>
+    </div>
+    <div class="pricing-row">
+      <div class="pricing-card pc-free">
+        <div class="glow-orb go-free"></div>
+        <div class="card-header"><p class="tier-name tn-free">FREE</p><span class="tier-badge tb-free">🆓 Always Free</span></div>
+        <div class="pf-list">
+          <div class="pf-item"><span class="pf-icon">✅</span><p>Task management (unlimited)</p></div>
+          <div class="pf-item"><span class="pf-icon">✅</span><p>Habit tracking (up to 5)</p></div>
+          <div class="pf-item"><span class="pf-icon">✅</span><p>Basic focus sessions</p></div>
+          <div class="pf-item"><span class="pf-icon">✅</span><p>7-day analytics</p></div>
+          <div class="pf-item"><span class="pf-icon">✅</span><p>Offline functionality</p></div>
+        </div>
+      </div>
+      <div class="pricing-card pc-pro">
+        <div class="glow-orb go-pro"></div>
+        <div class="card-header"><p class="tier-name tn-pro">PRO</p><span class="tier-badge tb-pro">⭐ Premium</span></div>
+        <div class="pf-list">
+          <div class="pf-item"><span class="pf-icon">🌟</span><p>Everything in Free</p></div>
+          <div class="pf-item"><span class="pf-icon">🌟</span><p>Cloud sync &amp; backup</p></div>
+          <div class="pf-item"><span class="pf-icon">🌟</span><p>Extended analytics (30/90/All-time)</p></div>
+          <div class="pf-item"><span class="pf-icon">🌟</span><p>Advanced AI recommendations</p></div>
+          <div class="pf-item"><span class="pf-icon">🌟</span><p>Unlimited habits</p></div>
+          <div class="pf-item"><span class="pf-icon">🌟</span><p>Priority support</p></div>
+        </div>
+      </div>
+    </div>
+    <p class="tagline">"Start free. Go Pro when you need more."</p>
+  </div>
+
+  <!-- ── SLIDE 12: RESEARCH ── -->
+  <div class="slide" id="s12">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tr"></div><div class="orb orb-bl"></div>
+    <div class="header">
+      <p class="section-label-center">RELATED WORK</p>
+      <h1 class="main-title" style="font-size:2.6rem;text-align:center;margin-top:.4rem;">Research Foundation</h1>
+    </div>
+    <div class="content">
+      <div class="cards-row">
+        <div class="res-card rc-teal"><div class="rc-icon ri-teal"><i class="fas fa-book"></i></div><p class="rc-header" style="color:var(--teal);">Smith (2020)</p><p class="rc-text">"AI-driven systems enhance productivity through user behavior analysis"</p></div>
+        <div class="res-card rc-purple"><div class="rc-icon ri-purple"><i class="fas fa-chart-bar"></i></div><p class="rc-header" style="color:var(--purple);">Zhao et al. (2021)</p><p class="rc-text">"ML models predict user behavior patterns using historical data"</p></div>
+        <div class="res-card rc-teal"><div class="rc-icon ri-teal"><i class="fas fa-mobile-alt"></i></div><p class="rc-header" style="color:var(--teal);">Patel (2022)</p><p class="rc-text">"Data-driven analytics are critical in mobile productivity apps"</p></div>
+      </div>
+      <div class="hl-card gap-card"><div class="hl-icon hi-gap"><i class="fas fa-search"></i></div><div><p class="hl-title">Gap Identified</p><p class="hl-desc">No existing platform unifies all three pillars (Tasks + Habits + Focus) with AI intelligence.</p></div></div>
+      <div class="hl-card sol-card"><div class="hl-icon hi-sol"><i class="fas fa-check"></i></div><div><p class="hl-title">SHUBIQ Flow Solution</p><p class="hl-desc">Addresses this gap with integrated architecture and proposed AI layer.</p></div></div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 13: CHALLENGES ── -->
+  <div class="slide" id="s13">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tr"></div><div class="orb orb-bl"></div>
+    <div class="header">
+      <p class="section-label-center">CHALLENGES</p>
+      <h1 class="main-title" style="font-size:2.6rem;text-align:center;margin-top:.4rem;">Challenges &amp; Current Limitations</h1>
+    </div>
+    <div class="grid" style="position:relative;z-index:10;">
+      <div class="row">
+        <div class="chal-card cc-orange"><div class="cc-deco">01</div><div class="cc-icon ci-orange"><i class="fas fa-cube"></i></div><p class="cc-title co">Cold Start Problem</p><p class="cc-desc">ML models require large historical datasets; early-stage predictions may be unreliable without sufficient user data.</p></div>
+        <div class="chal-card cc-red"><div class="cc-deco">02</div><div class="cc-icon ci-red"><i class="fas fa-lock"></i></div><p class="cc-title cr">Data Privacy</p><p class="cc-desc">Handling sensitive personal productivity data requires rigorous end-to-end encryption and secure authentication.</p></div>
+        <div class="chal-card cc-yellow"><div class="cc-deco">03</div><div class="cc-icon ci-yellow"><i class="fas fa-mobile-alt"></i></div><p class="cc-title cy">Platform Availability</p><p class="cc-desc">Currently restricted to Android. Expansion to iOS and Web platforms is in the development roadmap.</p></div>
+      </div>
+      <div class="row">
+        <div class="chal-card cc-purple"><div class="cc-deco">04</div><div class="cc-icon ci-purple"><i class="fas fa-cloud"></i></div><p class="cc-title cp">Connectivity Dependency</p><p class="cc-desc">While core features are offline-first, advanced cloud sync and backups require an active internet connection.</p></div>
+        <div class="chal-card cc-teal"><div class="cc-deco">05</div><div class="cc-icon ci-teal"><i class="fas fa-chart-line"></i></div><p class="cc-title ct">Prediction Accuracy</p><p class="cc-desc">Early-stage ML accuracy is limited by the initial volume of behavioral data available for training.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 14: ROADMAP ── -->
+  <div class="slide" id="s14">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tc"></div><div class="orb orb-bc"></div>
+    <div class="header">
+      <p class="section-label-center">FUTURE ROADMAP</p>
+      <h1 class="main-title" style="font-size:2.6rem;text-align:center;margin-top:.4rem;">Future Development Roadmap</h1>
+    </div>
+    <div class="timeline">
+      <div class="tl-line"><div class="tl-progress"></div></div>
+      <div class="nodes-wrap">
+        <div class="rn st">
+          <div class="rn-top"><span class="rn-phase">Phase 1</span><p class="rn-title">iOS &amp; Web Expansion</p></div>
+          <div class="rn-circle"><i class="fas fa-laptop-mobile"></i></div>
+          <div class="rn-bottom"><p class="rn-desc">Extending platform reach across devices</p></div>
+        </div>
+        <div class="rn sp">
+          <div class="rn-top"><span class="rn-phase">Phase 2</span><p class="rn-title">AI Behavioral Engine</p></div>
+          <div class="rn-circle"><i class="fas fa-brain"></i></div>
+          <div class="rn-bottom"><p class="rn-desc">Full AI analysis deployment</p></div>
+        </div>
+        <div class="rn st">
+          <div class="rn-top"><span class="rn-phase">Phase 3</span><p class="rn-title">Smart Scheduling</p></div>
+          <div class="rn-circle"><i class="fas fa-calendar-check"></i></div>
+          <div class="rn-bottom"><p class="rn-desc">AI-driven calendar optimization</p></div>
+        </div>
+        <div class="rn sp">
+          <div class="rn-top"><span class="rn-phase">Phase 4</span><p class="rn-title">Team Collaboration</p></div>
+          <div class="rn-circle"><i class="fas fa-users"></i></div>
+          <div class="rn-bottom"><p class="rn-desc">Social &amp; team productivity features</p></div>
+        </div>
+        <div class="rn st">
+          <div class="rn-top"><span class="rn-phase">Phase 5</span><p class="rn-title">Enterprise Dashboard</p></div>
+          <div class="rn-circle"><i class="fas fa-chart-pie"></i></div>
+          <div class="rn-bottom"><p class="rn-desc">Org-level analytics &amp; management</p></div>
+        </div>
+        <div class="rn sp">
+          <div class="rn-top"><span class="rn-phase">Phase 6</span><p class="rn-title">Wearable Integration</p></div>
+          <div class="rn-circle"><i class="fas fa-stopwatch"></i></div>
+          <div class="rn-bottom"><p class="rn-desc">Smartwatch &amp; IoT device support</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 15: CONCLUSION ── -->
+  <div class="slide" id="s15">
+    <div class="grid-bg"></div>
+    <div class="orb orb-tl"></div><div class="orb orb-br"></div>
+    <div class="header">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+        <div style="width:4px;height:22px;background:var(--teal);border-radius:2px;"></div>
+        <p style="color:var(--teal);font-size:.9rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;">CONCLUSION</p>
+      </div>
+      <h1 class="main-title" style="font-size:2.4rem;">Conclusion</h1>
+    </div>
+    <div class="content">
+      <div class="grid">
+        <div class="conc-card"><div class="conc-icon ci-t"><i class="fas fa-link"></i></div><div><p class="conc-title">Unified Platform</p><p class="conc-desc">Integrates Tasks, Habits, and Focus sessions into one seamless ecosystem.</p></div></div>
+        <div class="conc-card"><div class="conc-icon ci-p"><i class="fas fa-wifi"></i></div><div><p class="conc-title">Offline-First</p><p class="conc-desc">Ensures always-available productivity regardless of internet connectivity.</p></div></div>
+        <div class="conc-card"><div class="conc-icon ci-t"><i class="fas fa-robot"></i></div><div><p class="conc-title">AI-Powered</p><p class="conc-desc">Transforms from a simple tracker into an intelligent productivity assistant.</p></div></div>
+        <div class="conc-card"><div class="conc-icon ci-p"><i class="fas fa-gamepad"></i></div><div><p class="conc-title">Gamification</p><p class="conc-desc">Drives long-term behavioral consistency through XP, levels &amp; streaks.</p></div></div>
+        <div class="conc-card"><div class="conc-icon ci-t"><i class="fas fa-star"></i></div><div><p class="conc-title">Freemium Model</p><p class="conc-desc">Accessible core features for all, scalable to Pro for advanced insights.</p></div></div>
+        <div class="conc-card"><div class="conc-icon ci-p"><i class="fas fa-rocket"></i></div><div><p class="conc-title">Future Impact</p><p class="conc-desc">Potential to significantly transform personal &amp; organizational efficiency.</p></div></div>
+      </div>
+      <div class="quote-card">
+        <p class="quote-text"><span class="quote-teal">"</span>From Tracking to Intelligence — The Future of Productivity<span class="quote-teal">"</span></p>
+      </div>
+    </div>
+    <footer>
+      <p>SHUBIQ Flow Research Presentation</p>
+      <p>Shubham Malgonda Patil &nbsp;|&nbsp; MCA &nbsp;|&nbsp; Vasantraodada Patil Institute of Management Studies &amp; Research, Sangli</p>
+    </footer>
+  </div>
+
+</div><!-- /stage -->
+
+<!-- ══════════════════════════════════
+     NAVIGATION BAR
+══════════════════════════════════ -->
+<div id="nav" style="position:relative;">
+  <div id="progress-bar" style="width:6.67%;"></div>
+  <button class="nav-btn" id="btn-prev" title="Previous (←)"><i class="fas fa-chevron-left"></i></button>
+  <div id="nav-slides"></div>
+  <span id="slide-counter">1 / 15</span>
+  <button class="nav-btn" id="btn-next" title="Next (→)"><i class="fas fa-chevron-right"></i></button>
+</div>
+
+<script>
+// ─── SLIDE LABELS ───
+const LABELS = [
+  'Title','Problem','Solution','Tasks','Habits',
+  'Focus','Analytics','AI Engine','Tech Stack','Gamification',
+  'Freemium','Research','Challenges','Roadmap','Conclusion'
+];
+const TOTAL = 15;
+let current = 1;
+let isAnimating = false;
+
+// Build nav dots
+const navSlides = document.getElementById('nav-slides');
+for (let i = 1; i <= TOTAL; i++) {
+  const d = document.createElement('button');
+  d.className = 'nav-dot' + (i===1?' active':'');
+  d.textContent = i;
+  d.title = LABELS[i-1];
+  d.dataset.slide = i;
+  d.addEventListener('click', () => goTo(parseInt(d.dataset.slide)));
+  navSlides.appendChild(d);
+}
+
+function updateNav() {
+  document.querySelectorAll('.nav-dot').forEach(d => {
+    d.classList.toggle('active', parseInt(d.dataset.slide) === current);
+  });
+  document.getElementById('slide-counter').textContent = current + ' / ' + TOTAL;
+  document.getElementById('progress-bar').style.width = ((current/TOTAL)*100) + '%';
+  // Scroll active dot into view
+  const activeDot = navSlides.querySelector('.nav-dot.active');
+  if (activeDot) activeDot.scrollIntoView({inline:'nearest', behavior:'smooth'});
+}
+
+function goTo(n) {
+  if (n === current || isAnimating) return;
+  isAnimating = true;
+  const prev = document.getElementById('s'+current);
+  const next = document.getElementById('s'+n);
+  prev.classList.add('exit');
+  prev.classList.remove('active');
+  // Reset chart if leaving slide 7
+  if (current === 7) chartsInitialized = false;
+  current = n;
+  updateNav();
+  setTimeout(() => {
+    prev.classList.remove('exit');
+    next.style.transform = 'translateX(60px)';
+    next.classList.add('active');
+    requestAnimationFrame(() => {
+      next.style.transform = '';
+      setTimeout(() => { isAnimating = false; }, 450);
+    });
+    // Init charts if slide 7
+    if (current === 7) initCharts();
+  }, 50);
+}
+
+document.getElementById('btn-prev').addEventListener('click', () => goTo(Math.max(1, current-1)));
+document.getElementById('btn-next').addEventListener('click', () => goTo(Math.min(TOTAL, current+1)));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(Math.min(TOTAL, current+1)); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goTo(Math.max(1, current-1)); }
+  if (e.key === 'Home') goTo(1);
+  if (e.key === 'End') goTo(TOTAL);
+});
+
+// Swipe support
+let touchStartX = 0;
+document.getElementById('stage').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+document.getElementById('stage').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 50) dx < 0 ? goTo(Math.min(TOTAL, current+1)) : goTo(Math.max(1, current-1));
+});
+
+// ─── CHARTS (Slide 7) ───
+let chartsInitialized = false;
+let barChartInst = null, donutChartInst = null;
+
+function initCharts() {
+  if (chartsInitialized) return;
+  chartsInitialized = true;
+  if (barChartInst) barChartInst.destroy();
+  if (donutChartInst) donutChartInst.destroy();
+  Chart.defaults.color = '#94a3b8';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.1)';
+  const barCtx = document.getElementById('barChart').getContext('2d');
+  barChartInst = new Chart(barCtx, {
+    type:'bar',
+    data:{
+      labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets:[{label:'Tasks Completed',data:[0,0,0,0,2,0,0],backgroundColor:'#00D9A0',borderRadius:4,barThickness:20}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}},x:{grid:{display:false}}}}
+  });
+  const donutCtx = document.getElementById('donutChart').getContext('2d');
+  donutChartInst = new Chart(donutCtx, {
+    type:'doughnut',
+    data:{labels:['Health','Learning'],datasets:[{data:[50,50],backgroundColor:['#00D9A0','#7C3AED'],borderWidth:0,hoverOffset:4}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'70%',plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:18}}}}
+  });
+}
+</script>
+</body>
+</html>
